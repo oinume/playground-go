@@ -22,4 +22,8 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
 /vendor
+.idea
+*.iml
+glide.lock
