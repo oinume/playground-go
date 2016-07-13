@@ -1,2 +1,5 @@
 package: github.com/oinume/playground-go
-import: []
+import:
+- package: golang.org/x/net
+  subpackages:
+  - context
