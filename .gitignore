@@ -25,4 +25,6 @@ _testmain.go
 
 /vendor
 .idea/workspace.xml
-
+.idea/libraries/GOPATH__playground_go_.xml
+.idea/misc.xml
+*.iml
