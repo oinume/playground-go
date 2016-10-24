@@ -1,6 +1,8 @@
 package: github.com/oinume/playground-go
 import:
-- package: golang.org/x/net
-  subpackages:
-  - context
-- package: github.com/sclevine/agouti
+  - package: golang.org/x/net
+    subpackages:
+    - context
+  - package: github.com/sclevine/agouti
+  - package: github.com/shogo82148/go-sql-proxy
+  - package: github.com/mattn/go-sqlite3
