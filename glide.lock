@@ -1,10 +1,20 @@
-hash: 4d044d43cc661d2375419f5662ea48e25275b5807dd756ecda517ddf5fb56111
-updated: 2016-10-13T18:18:54.440955713+09:00
+hash: d3eb95fa43243845a03851a16ff1b450d7a2c12fc4878840d6e82ccf774b94e5
+updated: 2016-10-24T15:57:30.892430862+09:00
 imports:
+- name: github.com/mattn/go-sqlite3
+  version: e5a3c16c5c1d80b24f633e68aecd6b0702786d3d
 - name: github.com/sclevine/agouti
-  version: 1b7bab9e087ad475174a2c1568d0f4680dc01fe1
+  version: 1d217930b95113e88565b177e12192b75aa74fd1
+  subpackages:
+  - api
+  - internal/element
+  - internal/target
+  - api/internal/bus
+  - api/internal/service
+- name: github.com/shogo82148/go-sql-proxy
+  version: 0ff9659b5642274097d62b43b2d754b001ed4f4d
 - name: golang.org/x/net
-  version: 1358eff22f0dd0c54fc521042cc607f6ff4b531a
+  version: c33d37840d93fc75251f49ab83c5fc8b2faea5e8
   subpackages:
   - context
 testImports: []
