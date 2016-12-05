@@ -1,10 +1,14 @@
-hash: d3eb95fa43243845a03851a16ff1b450d7a2c12fc4878840d6e82ccf774b94e5
-updated: 2016-10-24T15:57:30.892430862+09:00
+hash: 59c359537595455f46d3e87c6fc14fa40cabde215882c9de76e20c65b409823b
+updated: 2016-12-05T12:02:15.065815586+09:00
 imports:
+- name: github.com/jinzhu/gorm
+  version: eb06255b667da417d982c6412c4602e932cc5283
+- name: github.com/jinzhu/inflection
+  version: 74387dc39a75e970e7a3ae6a3386b5bd2e5c5cff
 - name: github.com/mattn/go-sqlite3
-  version: e5a3c16c5c1d80b24f633e68aecd6b0702786d3d
+  version: 8ecd77c707d698b39fbcf76e4e8d08f284c8307f
 - name: github.com/sclevine/agouti
-  version: 1d217930b95113e88565b177e12192b75aa74fd1
+  version: da6ce95d89acab048b648c71fb45b57622d3457e
   subpackages:
   - api
   - internal/element
@@ -14,7 +18,7 @@ imports:
 - name: github.com/shogo82148/go-sql-proxy
   version: 0ff9659b5642274097d62b43b2d754b001ed4f4d
 - name: golang.org/x/net
-  version: c33d37840d93fc75251f49ab83c5fc8b2faea5e8
+  version: 6cdc0daab091c43fc46193327e0047b4f883c613
   subpackages:
   - context
 testImports: []
