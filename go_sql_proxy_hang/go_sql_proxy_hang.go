@@ -44,8 +44,8 @@ func open(dsn string, useProxy bool) (*sql.DB, error) {
 		hooks := &proxy.Hooks{
 			PreExec: func(stmt *proxy.Stmt, args []driver.Value) (interface{}, error) {
 				fmt.Printf("PreExec: stmt=%v\n", stmt.QueryString)
-				//panic(stmt.QueryString)
-				return nil, nil
+				return nil, fmt.Errorf("error from go-sql-proxy!")
+				//return nil, nil
 			},
 			PreQuery: func(stmt *proxy.Stmt, args []driver.Value) (interface{}, error) {
 				return nil, nil
