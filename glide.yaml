@@ -6,3 +6,5 @@ import:
   - package: github.com/sclevine/agouti
   - package: github.com/shogo82148/go-sql-proxy
   - package: github.com/mattn/go-sqlite3
+  - package: github.com/jinzhu/inflection
+  - package: github.com/jinzhu/gorm
