@@ -1,12 +1,12 @@
 package main
 
 import (
-	"net/http"
-	"log"
 	"fmt"
 	"io"
-	"strings"
+	"log"
+	"net/http"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -43,13 +43,13 @@ func upload(w http.ResponseWriter, r *http.Request) {
 		internalServerError(w, fmt.Errorf("failed to parse form"))
 		return
 	}
-	for _, name := range []string{"file1","file2"} {
+	for _, name := range []string{"file1", "file2"} {
 		file, handler, err := r.FormFile(name)
 		if err != nil {
 			internalServerError(w, err)
 			return
 		}
-		f,err := os.Create("/tmp/" + handler.Filename)
+		f, err := os.Create("/tmp/" + handler.Filename)
 		if err != nil {
 			internalServerError(w, err)
 			return
