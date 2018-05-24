@@ -60,8 +60,9 @@ func producer(results chan string, errs chan error) {
 	//close(errs)
 }
 
+var titleRegexp = regexp.MustCompile("<title>(.*)</title>")
+
 func extractTitle(s string) string {
-	title := regexp.MustCompile("<title>(.*)</title>")
-	group := title.FindStringSubmatch(s)
+	group := titleRegexp.FindStringSubmatch(s)
 	return group[1]
 }
