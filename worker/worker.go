@@ -1,9 +1,9 @@
 package main
 
 import (
-	"net/http"
-	"io/ioutil"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"regexp"
 	"sync"
 )
@@ -16,13 +16,13 @@ func main() {
 
 	for {
 		select {
-		case r, ok := <- results:
+		case r, ok := <-results:
 			if !ok {
 				fmt.Printf("Channel is closed\n")
 				return
 			}
 			fmt.Printf("result = %v\n", r)
-		case err := <- errs:
+		case err := <-errs:
 			fmt.Printf("err = %v\n", err)
 		}
 	}
