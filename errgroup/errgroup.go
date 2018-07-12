@@ -1,14 +1,15 @@
 package main
 
 import (
-	"golang.org/x/sync/errgroup"
-	"net/http"
-	"time"
-	"log"
 	"fmt"
-	"sync"
 	"io/ioutil"
+	"log"
+	"net/http"
 	"strings"
+	"sync"
+	"time"
+
+	"golang.org/x/sync/errgroup"
 )
 
 type transport struct {
@@ -23,7 +24,7 @@ func (t *transport) RoundTrip(r *http.Request) (*http.Response, error) {
 
 	code := http.StatusOK
 	status := "200 OK"
-	if t.count % 3 == 0 {
+	if t.count%3 == 0 {
 		code = http.StatusInternalServerError
 		status = fmt.Sprintf("500 error: count=%v", t.count)
 	}
@@ -32,7 +33,7 @@ func (t *transport) RoundTrip(r *http.Request) (*http.Response, error) {
 		Request:    r,
 		StatusCode: code,
 		Status:     status,
-		Body: ioutil.NopCloser(strings.NewReader("hoge")),
+		Body:       ioutil.NopCloser(strings.NewReader("hoge")),
 	}
 	resp.Header.Set("Content-Type", "text/html; charset=UTF-8")
 
@@ -43,20 +44,20 @@ var client *http.Client
 
 func main() {
 	client = &http.Client{
-		Timeout: 5 * time.Second,
+		Timeout:   5 * time.Second,
 		Transport: &transport{},
 	}
 	urls := []string{
-		"http://eikaiwa.dmm.com/teacher/index/6210/",
-		"http://eikaiwa.dmm.com/teacher/index/5654/",
-		"http://eikaiwa.dmm.com/teacher/index/5616/",
-		"http://eikaiwa.dmm.com/teacher/index/3923/",
-		"http://eikaiwa.dmm.com/teacher/index/5412/",
-		"http://eikaiwa.dmm.com/teacher/index/9848/",
-		"http://eikaiwa.dmm.com/teacher/index/6122/",
-		"http://eikaiwa.dmm.com/teacher/index/3370/",
-		"http://eikaiwa.dmm.com/teacher/index/13786/",
-		"http://eikaiwa.dmm.com/teacher/index/3133/",
+		"https://eikaiwa.dmm.com/teacher/index/6210/",
+		"https://eikaiwa.dmm.com/teacher/index/5654/",
+		"https://eikaiwa.dmm.com/teacher/index/5616/",
+		"https://eikaiwa.dmm.com/teacher/index/3923/",
+		"https://eikaiwa.dmm.com/teacher/index/5412/",
+		"https://eikaiwa.dmm.com/teacher/index/9848/",
+		"https://eikaiwa.dmm.com/teacher/index/6122/",
+		"https://eikaiwa.dmm.com/teacher/index/3370/",
+		"https://eikaiwa.dmm.com/teacher/index/13786/",
+		"https://eikaiwa.dmm.com/teacher/index/3133/",
 	}
 	eg := errgroup.Group{}
 	for _, url := range urls {

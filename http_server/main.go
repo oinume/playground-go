@@ -1,10 +1,10 @@
 package main
 
 import (
+	"fmt"
+	"net"
 	"net/http"
 	"net/http/httptest"
-	"net"
-	"fmt"
 )
 
 func main() {
@@ -17,7 +17,7 @@ func testServer() {
 	server.Close()
 }
 
-func server(handler http.Handler, port int) httptest.Server {
+func server(handler http.Handler, port int) *httptest.Server {
 	return &httptest.Server{
 		Listener: newLocalListener(port),
 		Config:   &http.Server{Handler: handler},
