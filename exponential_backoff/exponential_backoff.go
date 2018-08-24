@@ -18,6 +18,6 @@ func main() {
 		fmt.Printf("Operation()\n")
 		return fmt.Errorf("error!")
 	}, expBackoff, func(err error, d time.Duration) {
-		fmt.Printf("notifiy: err=%v, d = %v\n", err, d)
+		fmt.Printf("Notifiy(): err = %v, d = %v\n", err, d)
 	})
 }
