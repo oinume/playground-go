@@ -19,8 +19,9 @@ func main() {
 }
 
 func realMain() error {
+	server := newServer()
 	go func() {
-		if err := startServer(8080); err != nil {
+		if err := server.start(8080); err != nil {
 			log.Fatal(err)
 		}
 	}()
@@ -38,7 +39,7 @@ func realMain() error {
 
 	resp, err := c.Do(req)
 	if err != nil {
-		//fmt.Printf("c.Do() failed: err=%v\n", err)
+		fmt.Printf("c.Do() failed: err=%v\n", err)
 		return err
 	}
 	defer resp.Body.Close()
@@ -52,53 +53,60 @@ func realMain() error {
 }
 
 type server struct {
+	mux         *http.ServeMux
 	innerServer *httptest.Server
 }
 
 func newServer() *server {
-	is := httptest.NewServer()
-	return &server{
+	is := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Printf("/inner\n")
+		duration := r.URL.Query().Get("duration")
+		d, err := time.ParseDuration(duration)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+		}
 
+		time.Sleep(d)
+		//w.WriteHeader(http.StatusOK)
+		_, _ = fmt.Fprint(w, "ok")
+	}))
+	s := &server{
+		innerServer: is,
 	}
-}
 
-func startServer(port int) error {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", sleep)
-	return http.ListenAndServe(fmt.Sprintf("localhost:%d", port), mux)
+	mux.HandleFunc("/", s.outer)
+	s.mux = mux
+
+	return s
 }
 
-func sleep(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("/sleep\n")
+func (s *server) start(port int) error {
+	return http.ListenAndServe(fmt.Sprintf("localhost:%d", port), s.mux)
+}
+
+func (s *server) outer(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("/outer\n")
 	duration := r.URL.Query().Get("duration")
 	d, err := time.ParseDuration(duration)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
-	go func() {
-		s := newInnerServer()
-		s.URL
-	}
-
-	time.Sleep(d)
-	//w.WriteHeader(http.StatusOK)
-	_, _ = fmt.Fprint(w, "ok")
-}
-
-func newInnerServer() *httptest.Server {
-	return httptest.NewServer(http.HandlerFunc(inner))
-}
-
-func inner(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("/inner\n")
-	duration := r.URL.Query().Get("duration")
-	d, err := time.ParseDuration(duration)
+	c := http.DefaultClient
+	req, err := http.NewRequest("GET", s.innerServer.URL+"/inner?duration=10s", nil)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		panic(err)
 	}
+	req.WithContext(r.Context())
+	resp, err := c.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	fmt.Printf("body = %+v\n", string(body))
 
 	time.Sleep(d)
-	//w.WriteHeader(http.StatusOK)
-	_, _ = fmt.Fprint(w, "ok")
+	_, _ = fmt.Fprint(w, "ok:")
 }
