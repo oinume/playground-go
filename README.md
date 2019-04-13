@@ -1,2 +1,6 @@
 # playground
-My playground for some programming languages
+My playground for Go
+
+## Requirements
+
+- Go >= 1.11
