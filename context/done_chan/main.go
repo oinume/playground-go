@@ -9,12 +9,12 @@ import (
 func main() {
 	var wg sync.WaitGroup
 	done := make(chan interface{})
-	defer func() {
-		close(done)
-		if err := printGreeting(done); err != nil {
-			fmt.Printf("err=%v\n", err)
-		}
-	}()
+	close(done)
+	//defer func() {
+	//	if err := printGreeting(done); err != nil {
+	//		fmt.Printf("err = %v\n", err)
+	//	}
+	//}()
 
 	wg.Add(1)
 	go func() {

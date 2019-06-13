@@ -10,13 +10,12 @@ import (
 func main() {
 	var wg sync.WaitGroup
 	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	//defer func() {
-	//	cancel()
-	//	if err := printGreeting(ctx); err != nil {
-	//		fmt.Printf("err=%v\n", err)
-	//	}
-	//}()
+	defer func() {
+		cancel()
+		if err := printGreeting(ctx); err != nil {
+			fmt.Printf("err=%v\n", err)
+		}
+	}()
 
 	wg.Add(1)
 	go func() {
