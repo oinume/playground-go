@@ -75,7 +75,7 @@ func locale(done <-chan interface{}) (string, error) {
 	case <-done:
 		return "", fmt.Errorf("canceled")
 	case <-time.After(5 * time.Second): // Originally 1 * time.Minute
-		// wait 1 minute
+		//fmt.Printf("5 second elapsed\n")
 	}
 	return "EN/US", nil
 }
