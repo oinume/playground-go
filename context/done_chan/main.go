@@ -9,7 +9,7 @@ import (
 func main() {
 	var wg sync.WaitGroup
 	done := make(chan interface{})
-	close(done)
+	defer close(done)
 	//defer func() {
 	//	if err := printGreeting(done); err != nil {
 	//		fmt.Printf("err = %v\n", err)
@@ -20,7 +20,7 @@ func main() {
 	go func() {
 		defer wg.Done()
 		if err := printGreeting(done); err != nil {
-			fmt.Printf("%v", err)
+			fmt.Printf("%v\n", err)
 			return
 		}
 	}()
@@ -29,7 +29,7 @@ func main() {
 	go func() {
 		defer wg.Done()
 		if err := printFarewell(done); err != nil {
-			fmt.Printf("%v", err)
+			fmt.Printf("%v\n", err)
 			return
 		}
 	}()
