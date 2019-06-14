@@ -11,6 +11,7 @@ func main() {
 	done := make(chan interface{})
 	defer close(done)
 	//defer func() {
+	//	close(done)
 	//	if err := printGreeting(done); err != nil {
 	//		fmt.Printf("err = %v\n", err)
 	//	}
