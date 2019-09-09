@@ -21,15 +21,13 @@ func main() {
 	// Producer
 	go func() {
 		targetURLs := []string{
-			"https://www.lekcije.com/",
-			"https://journal.lampetty.net/",
-			"https://journal.lampetty.net/entry/concurrency-in-go-goroutines",
-			"https://journal.lampetty.net/entry/concurrency-in-go-goroutines",
-			"https://journal.lampetty.net/entry/concurrency-in-go-goroutines",
-			"https://journal.lampetty.net/entry/concurrency-in-go-goroutines",
-			"https://journal.lampetty.net/entry/concurrency-in-go-goroutines",
-			"https://journal.lampetty.net/entry/concurrency-in-go-goroutines",
-			"https://journal.lampetty.net/entry/concurrency-in-go-goroutines",
+			"https://journal.lampetty.net/entry/review-2019-07",
+			"https://journal.lampetty.net/entry/review-2019-06",
+			"https://journal.lampetty.net/entry/review-2019-05",
+			"https://journal.lampetty.net/entry/review-2019-04",
+			"https://journal.lampetty.net/entry/review-2019-03",
+			"https://journal.lampetty.net/entry/review-2019-02",
+			"https://journal.lampetty.net/entry/review-2019-01",
 		}
 		for _, url := range targetURLs {
 			urls <- url
@@ -42,7 +40,7 @@ func main() {
 	}
 }
 
-func httpGet(urls <-chan string, results chan result) {
+func httpGet(urls <-chan string, results chan<- result) {
 	for url := range urls {
 		resp, err := http.Get(url)
 		if err != nil {
