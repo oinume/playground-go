@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"regexp"
 	"sync"
+	"time"
 )
 
 var (
@@ -18,7 +19,6 @@ func main() {
 	semaphore := make(chan struct{}, *concurrency)
 	var wg sync.WaitGroup
 	urls := []string{
-		"https://journal.lampetty.net/",
 		"https://journal.lampetty.net/entry/what-i-like-about-heroku",
 		"https://journal.lampetty.net/entry/e2e-test-with-agouti-in-go",
 		"https://journal.lampetty.net/entry/heroku-custom-clock-processes",
@@ -27,6 +27,12 @@ func main() {
 		"https://journal.lampetty.net/entry/introducing-lekcije",
 		"https://journal.lampetty.net/entry/intellij-shortcuts-for-reading-source-code",
 		"https://journal.lampetty.net/entry/introducing-dead-mans-snitch",
+		"https://journal.lampetty.net/entry/concurrency-in-go-channels",
+		"https://journal.lampetty.net/entry/concurrency-in-go-goroutines",
+		"https://journal.lampetty.net/entry/cancel-and-timeout-with-context-in-go",
+		"https://journal.lampetty.net/entry/gcp-cloud-pubsub-memo",
+		"https://journal.lampetty.net/entry/oauth2-client-handson-in-go-authorization-code-grant",
+		"https://journal.lampetty.net/entry/satisfying-a-large-interface-quickly-in-go",
 	}
 	for _, u := range urls {
 		wg.Add(1)
@@ -46,7 +52,7 @@ func fetch(semaphore chan struct{}, url string) {
 	defer func() {
 		<-semaphore
 	}()
-
+	time.Sleep(3 * time.Second)
 	resp, err := http.Get(url)
 	if err != nil {
 		fmt.Printf("err = %v\n", err)
