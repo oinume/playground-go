@@ -1,13 +1,12 @@
 package main
 
 import (
-	"sync"
-	"net/http"
+	"flag"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"regexp"
-	"os"
-	"flag"
+	"sync"
 )
 
 var (
@@ -17,33 +16,33 @@ var (
 func main() {
 	flag.Parse()
 	semaphore := make(chan struct{}, *concurrency)
-	wg := &sync.WaitGroup{}
+	var wg sync.WaitGroup
 	urls := []string{
-		"http://oinume.hatenablog.com/",
-		"http://oinume.hatenablog.com/entry/what-i-like-about-heroku",
-		"http://oinume.hatenablog.com/entry/e2e-test-with-agouti-in-go",
-		"http://oinume.hatenablog.com/entry/heroku-custom-clock-processes",
-		"http://oinume.hatenablog.com/entry/mac-settings-on-sierra",
-		"http://oinume.hatenablog.com/entry/mysqldump-option-where",
-		"http://oinume.hatenablog.com/entry/introducing-lekcije",
-		"http://oinume.hatenablog.com/entry/intellij-shortcuts-for-reading-source-code",
-		"http://oinume.hatenablog.com/entry/introducing-dead-mans-snitch",
+		"https://journal.lampetty.net/",
+		"https://journal.lampetty.net/entry/what-i-like-about-heroku",
+		"https://journal.lampetty.net/entry/e2e-test-with-agouti-in-go",
+		"https://journal.lampetty.net/entry/heroku-custom-clock-processes",
+		"https://journal.lampetty.net/entry/mac-settings-on-sierra",
+		"https://journal.lampetty.net/entry/mysqldump-option-where",
+		"https://journal.lampetty.net/entry/introducing-lekcije",
+		"https://journal.lampetty.net/entry/intellij-shortcuts-for-reading-source-code",
+		"https://journal.lampetty.net/entry/introducing-dead-mans-snitch",
 	}
 	for _, u := range urls {
 		wg.Add(1)
-		go func(u string) {
+		u := u
+		go func() {
 			defer wg.Done()
 			fetch(semaphore, u)
-		}(u)
+		}()
 	}
 	wg.Wait()
-	os.Exit(0)
 }
 
 var r = regexp.MustCompile(`<title>(.*)</title>`)
 
 func fetch(semaphore chan struct{}, url string) {
-	semaphore<-struct{}{}
+	semaphore <- struct{}{}
 	defer func() {
 		<-semaphore
 	}()
@@ -53,7 +52,7 @@ func fetch(semaphore chan struct{}, url string) {
 		fmt.Printf("err = %v\n", err)
 		return
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	bytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -62,6 +61,6 @@ func fetch(semaphore chan struct{}, url string) {
 	}
 	body := string(bytes)
 	if group := r.FindStringSubmatch(body); len(group) > 0 {
-		fmt.Printf("title = %v\n", group[1])
+		fmt.Printf("%v\n", group[1])
 	}
 }
