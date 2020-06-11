@@ -1,4 +1,4 @@
-// +build !serial
+// +build parallel
 
 package main
 
