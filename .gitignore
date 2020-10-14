@@ -27,3 +27,4 @@ _testmain.go
 .idea
 *.iml
 *.sqlite3
+tools/bin/golangci-lint
