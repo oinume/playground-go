@@ -7,3 +7,8 @@ setup:
 .PHONY: lint
 lint:
 	golangci-lint run -j 4 --out-format=line-number ./...
+
+.PHONY: moq
+moq:
+	rm -f ./moq/github/*.moq.go
+	go generate ./moq/github
