@@ -1,8 +1,9 @@
 all: setup
 
 .PHONY: setup
-
 setup:
-	go get -u github.com/Masterminds/glide
-	go get -u golang.org/x/tools/cmd/goimports
-	glide install
+	cd tools && go list -f='{{ .Imports }}' . | tr -d [ | tr -d ] | xargs -I{} go install {}
+
+.PHONY: lint
+lint:
+	golangci-lint run -j 4 --out-format=line-number ./...
