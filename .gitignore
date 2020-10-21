@@ -29,3 +29,4 @@ _testmain.go
 *.sqlite3
 tools/bin/golangci-lint
 tools/bin/moq
+tools/bin/mockgen
