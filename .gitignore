@@ -28,4 +28,5 @@ _testmain.go
 *.iml
 *.sqlite3
 tools/bin/golangci-lint
-tools/bin/*
+tools/bin/moq
+tools/bin/mockgen
