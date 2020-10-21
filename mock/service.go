@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/oinume/playground-go/moq/github"
+	"github.com/oinume/playground-go/mock/github"
 )
 
 type Service struct {
