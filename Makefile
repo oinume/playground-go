@@ -10,4 +10,4 @@ lint:
 
 .PHONY: mock
 mock:
-	go generate ./moq/github
+	go generate ./mock/github

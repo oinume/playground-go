@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/oinume/playground-go/moq/github"
+	"github.com/oinume/playground-go/mock/github"
 )
 
 func TestService_PrintBranches(t *testing.T) {
