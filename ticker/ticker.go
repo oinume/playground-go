@@ -10,12 +10,12 @@ func main() {
 	defer ticker.Stop()
 	for i := 0; i < 10; i++ {
 		select {
-		case <-ticker.C:
-			doSomething(i)
+		case t := <-ticker.C:
+			doSomething(i, t)
 		}
 	}
 }
 
-func doSomething(v int) {
-	fmt.Printf("%d\n", v)
+func doSomething(v int, t time.Time) {
+	fmt.Printf("%d at %v\n", v, t)
 }
