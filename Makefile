@@ -8,7 +8,7 @@ setup: ## Install development tools
 	go list -tags=tools -f='{{ join .Imports "\n" }}' ./tools.go | tr -d [ | tr -d ] | xargs -I{} go install {}
 .PHONY: setup
 
-mock:
+mock-generate:
 	go generate ./mock/github
 .PHONY: mock
 

@@ -4,7 +4,7 @@
 package github
 
 import (
-	"context"
+	context "context"
 	"sync"
 )
 
@@ -14,19 +14,19 @@ var _ Client = &ClientMock{}
 
 // ClientMock is a mock implementation of Client.
 //
-//     func TestSomethingThatUsesClient(t *testing.T) {
+//	func TestSomethingThatUsesClient(t *testing.T) {
 //
-//         // make and configure a mocked Client
-//         mockedClient := &ClientMock{
-//             ListBranchesFunc: func(ctx context.Context, owner string, repo string) ([]string, error) {
-// 	               panic("mock out the ListBranches method")
-//             },
-//         }
+//		// make and configure a mocked Client
+//		mockedClient := &ClientMock{
+//			ListBranchesFunc: func(ctx context.Context, owner string, repo string) ([]string, error) {
+//				panic("mock out the ListBranches method")
+//			},
+//		}
 //
-//         // use mockedClient in code that requires Client
-//         // and then make assertions.
+//		// use mockedClient in code that requires Client
+//		// and then make assertions.
 //
-//     }
+//	}
 type ClientMock struct {
 	// ListBranchesFunc mocks the ListBranches method.
 	ListBranchesFunc func(ctx context.Context, owner string, repo string) ([]string, error)
@@ -68,7 +68,8 @@ func (mock *ClientMock) ListBranches(ctx context.Context, owner string, repo str
 
 // ListBranchesCalls gets all the calls that were made to ListBranches.
 // Check the length with:
-//     len(mockedClient.ListBranchesCalls())
+//
+//	len(mockedClient.ListBranchesCalls())
 func (mock *ClientMock) ListBranchesCalls() []struct {
 	Ctx   context.Context
 	Owner string
