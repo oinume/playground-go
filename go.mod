@@ -1,13 +1,12 @@
 module github.com/oinume/playground-go
 
-go 1.20
+go 1.21
 
 require (
 	github.com/cenkalti/backoff v2.0.0+incompatible
 	github.com/golang/mock v1.4.4
 	github.com/golangci/golangci-lint v1.31.0
 	github.com/gorilla/mux v1.6.2
-	github.com/jinzhu/gorm v0.0.0-20170202142941-23abd03a95a1
 	github.com/matryer/moq v0.3.1
 	github.com/mattn/go-sqlite3 v1.9.0
 	github.com/sclevine/agouti v3.0.0+incompatible
