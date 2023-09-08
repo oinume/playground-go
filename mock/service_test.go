@@ -72,19 +72,17 @@ func TestService_PrintBranches_Moq(t *testing.T) {
 
 func TestService_PrintBranches_Gomock(t *testing.T) {
 	// Simple example test
-	{
-		ctrl := gomock.NewController(t)
-		defer ctrl.Finish()
-		githubClient := github.NewMockClient(ctrl)
-		githubClient.
-			EXPECT().
-			ListBranches(context.Background(), "oinume", "playground-go").
-			Return([]string{"main", "feature/xyz"}, nil)
-		s := Service{githubClient: githubClient}
-		out := new(bytes.Buffer)
-		if err := s.PrintBranches(context.Background(), out, "oinume", "playground-go"); err != nil {
-			t.Fatal(err)
-		}
-		fmt.Printf("out = %v\n", out.String())
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	githubClient := github.NewMockClient(ctrl)
+	githubClient.
+		EXPECT().
+		ListBranches(context.Background(), "oinume", "playground-go").
+		Return([]string{"main", "feature/xyz"}, nil)
+	s := Service{githubClient: githubClient}
+	out := new(bytes.Buffer)
+	if err := s.PrintBranches(context.Background(), out, "oinume", "playground-go"); err != nil {
+		t.Fatal(err)
 	}
+	fmt.Printf("out = %v\n", out.String())
 }
