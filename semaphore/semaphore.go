@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"regexp"
 	"sync"
@@ -60,7 +60,7 @@ func fetch(semaphore chan struct{}, url string) {
 	}
 	defer func() { _ = resp.Body.Close() }()
 
-	bytes, err := ioutil.ReadAll(resp.Body)
+	bytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Printf("err = %v\n", err)
 		return

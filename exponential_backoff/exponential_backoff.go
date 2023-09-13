@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/cenkalti/backoff"
 )
 
-//output:
+// output:
 // Operation(): n = 1
 // Notifiy(): err = error!, d = 3s
 // Operation(): n = 2
@@ -24,7 +25,7 @@ func main() {
 	expBackoff.MaxInterval = 15 * time.Second
 
 	n := 0
-	backoff.RetryNotify(func() error {
+	err := backoff.RetryNotify(func() error {
 		time.Sleep(time.Millisecond * 500)
 		n++
 		fmt.Printf("Operation(): n = %v\n", n)
@@ -32,4 +33,7 @@ func main() {
 	}, expBackoff, func(err error, d time.Duration) {
 		fmt.Printf("Notifiy(): err = %v, d = %v\n", err, d)
 	})
+	if err != nil {
+		log.Fatal(err)
+	}
 }

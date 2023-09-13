@@ -1,14 +1,14 @@
 package main
 
 import (
-	"github.com/sclevine/agouti"
+	"fmt"
+	"log"
 	"net/http"
 	"net/http/httptest"
-	"fmt"
 	"time"
-	"log"
-)
 
+	"github.com/sclevine/agouti"
+)
 
 func main() {
 	mux := http.NewServeMux()

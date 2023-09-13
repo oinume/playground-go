@@ -11,10 +11,10 @@ func main() {
 	wg := sync.WaitGroup{}
 	for _, v := range values {
 		wg.Add(1)
-		go func() {
+		go func(v int) {
 			defer wg.Done()
 			fmt.Printf("v = %d\n", v)
-		}()
+		}(v)
 	}
 	wg.Wait()
 }
