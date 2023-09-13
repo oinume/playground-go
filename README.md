@@ -3,4 +3,4 @@ My playground for Go
 
 ## Requirements
 
-- Go >= 1.11
+- Go >= 1.18
