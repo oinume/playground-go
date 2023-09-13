@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"strings"
@@ -33,7 +33,7 @@ func (t *transport) RoundTrip(r *http.Request) (*http.Response, error) {
 		Request:    r,
 		StatusCode: code,
 		Status:     status,
-		Body:       ioutil.NopCloser(strings.NewReader("hoge")),
+		Body:       io.NopCloser(strings.NewReader("hoge")),
 	}
 	resp.Header.Set("Content-Type", "text/html; charset=UTF-8")
 
@@ -81,7 +81,7 @@ func getRequest(url string) error {
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("statusCode:%v, status:%v", resp.StatusCode, resp.Status)
 	}
-	_, err = ioutil.ReadAll(resp.Body)
+	_, err = io.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}

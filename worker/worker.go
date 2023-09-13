@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"regexp"
 	"sync"
@@ -45,7 +45,7 @@ func producer(results chan string, errs chan error) {
 				errs <- err
 				return
 			}
-			b, err := ioutil.ReadAll(resp.Body)
+			b, err := io.ReadAll(resp.Body)
 			if err != nil {
 				errs <- err
 				return

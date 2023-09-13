@@ -3,15 +3,13 @@ package main
 import (
 	"database/sql"
 	"database/sql/driver"
-	"log"
 	"fmt"
+	"log"
 	"os"
 
-	"github.com/shogo82148/go-sql-proxy"
 	"github.com/mattn/go-sqlite3"
+	"github.com/shogo82148/go-sql-proxy" //nolint:goimports
 )
-
-var _ = fmt.Print
 
 func main() {
 	fmt.Printf("Remove\n")

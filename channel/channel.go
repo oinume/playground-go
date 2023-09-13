@@ -7,7 +7,7 @@ func main() {
 	buffered()
 }
 
-func simple() {
+func simple() { //nolint:unused
 	messages := make(chan string)
 	go func() {
 		messages <- "ping"
@@ -16,7 +16,7 @@ func simple() {
 	fmt.Println(msg)
 }
 
-func deadlock() {
+func deadlock() { //nolint:unused
 	messages := make(chan string)
 	go func() {
 		//	messages <- "ping"

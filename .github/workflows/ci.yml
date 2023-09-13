@@ -1,0 +1,38 @@
+name: ci
+on:
+  push:
+    branches:
+      - "*"
+env:
+  CACHE_VERSION: 1
+  GOPATH: /home/runner/work/go
+  GOBIN: /home/runner/work/go/bin
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Cancel previous runs
+        uses: styfle/cancel-workflow-action@0.11.0
+        with:
+          access_token: ${{ github.token }}
+      - name: Check out the repository
+        uses: actions/checkout@v4
+      - uses: actions/cache@v3
+        id: cache
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-lint-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-lint-
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          cache: false
+          go-version-file: "go.mod"
+      - name: Run golangci-lint
+        run: |
+          make lint

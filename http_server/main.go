@@ -12,7 +12,7 @@ func main() {
 	server.Close()
 }
 
-func testServer() {
+func testServer() { //nolint:unused
 	server := httptest.NewServer(nil)
 	server.Close()
 }
