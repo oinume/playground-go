@@ -22,7 +22,7 @@ func main() {
 	if err := driver.Start(); err != nil {
 		log.Fatal(err)
 	}
-	defer driver.Stop()
+	defer driver.Stop() //nolint:errcheck
 
 	page, err := driver.NewPage()
 	if err != nil {

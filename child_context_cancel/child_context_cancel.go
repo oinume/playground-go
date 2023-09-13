@@ -63,7 +63,7 @@ func worker(ctx context.Context, n int, ch chan int, wg *sync.WaitGroup) {
 				}()
 				time.Sleep(5 * time.Second)
 				log.Printf("[%d] worker done for '%d'\n", n, v)
-				select {
+				select { //nolint:gosimple
 				case <-childCtx.Done():
 					log.Printf("[%d] worker done because of childCtx.Done: %v\n", n, childCtx.Err())
 					return

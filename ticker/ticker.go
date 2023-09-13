@@ -9,6 +9,7 @@ func main() {
 	ticker := time.NewTicker(time.Second)
 	defer ticker.Stop()
 	for i := 0; i < 10; i++ {
+		//nolint:gosimple
 		select {
 		case t := <-ticker.C:
 			doSomething(i, t)
