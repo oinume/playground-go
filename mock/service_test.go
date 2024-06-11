@@ -18,7 +18,7 @@ func TestService_PrintBranches_Moq(t *testing.T) {
 	{
 		githubClient := &github.ClientMock{
 			ListBranchesFunc: func(ctx context.Context, owner string, repo string) ([]string, error) {
-				return []string{"main", "feature/abc", "hotfix/xyz"}, nil
+				return []string{"main", "develop", "feature/a"}, nil
 			},
 		}
 		s := Service{githubClient: githubClient}
@@ -38,10 +38,10 @@ func TestService_PrintBranches_Moq(t *testing.T) {
 		"ok": {
 			githubClient: &github.ClientMock{
 				ListBranchesFunc: func(ctx context.Context, owner string, repo string) ([]string, error) {
-					return []string{"main", "feature/abc", "hotfix/xyz"}, nil
+					return []string{"main", "develop", "feature/a"}, nil
 				},
 			},
-			want:    "main\nfeature/abc\nhotfix/xyz\n",
+			want:    "main\ndevelop\nfeature/a\n",
 			wantErr: nil,
 		},
 		"error": {
@@ -78,7 +78,7 @@ func TestService_PrintBranches_Gomock(t *testing.T) {
 	githubClient.
 		EXPECT().
 		ListBranches(context.Background(), "oinume", "playground-go").
-		Return([]string{"main", "feature/abc", "hotfix/xyz"}, nil)
+		Return([]string{"main", "develop", "feature/a"}, nil)
 	s := Service{githubClient: githubClient}
 	out := new(bytes.Buffer)
 	if err := s.PrintBranches(context.Background(), out, "oinume", "playground-go"); err != nil {
