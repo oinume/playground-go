@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/golang/mock/gomock"
+	"go.uber.org/mock/gomock"
 
 	"github.com/oinume/playground-go/mock/github"
 )
@@ -18,7 +18,7 @@ func TestService_PrintBranches_Moq(t *testing.T) {
 	{
 		githubClient := &github.ClientMock{
 			ListBranchesFunc: func(ctx context.Context, owner string, repo string) ([]string, error) {
-				return []string{"main", "feature/xyz"}, nil
+				return []string{"main", "develop", "feature/a"}, nil
 			},
 		}
 		s := Service{githubClient: githubClient}
@@ -27,7 +27,7 @@ func TestService_PrintBranches_Moq(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		fmt.Printf("out = %v\n", out.String())
+		fmt.Printf("--- out ---\n%v\n", out.String())
 	}
 
 	tests := map[string]struct {
@@ -38,10 +38,10 @@ func TestService_PrintBranches_Moq(t *testing.T) {
 		"ok": {
 			githubClient: &github.ClientMock{
 				ListBranchesFunc: func(ctx context.Context, owner string, repo string) ([]string, error) {
-					return []string{"main", "feature/xyz"}, nil
+					return []string{"main", "develop", "feature/a"}, nil
 				},
 			},
-			want:    "main\nfeature/xyz\n",
+			want:    "main\ndevelop\nfeature/a\n",
 			wantErr: nil,
 		},
 		"error": {
@@ -78,11 +78,11 @@ func TestService_PrintBranches_Gomock(t *testing.T) {
 	githubClient.
 		EXPECT().
 		ListBranches(context.Background(), "oinume", "playground-go").
-		Return([]string{"main", "feature/xyz"}, nil)
+		Return([]string{"main", "develop", "feature/a"}, nil)
 	s := Service{githubClient: githubClient}
 	out := new(bytes.Buffer)
 	if err := s.PrintBranches(context.Background(), out, "oinume", "playground-go"); err != nil {
 		t.Fatal(err)
 	}
-	fmt.Printf("out = %v\n", out.String())
+	fmt.Printf("--- out ---\n%v\n", out.String())
 }
