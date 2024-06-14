@@ -1,11 +1,11 @@
 package main
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"fmt"
 	"reflect"
+	"strings"
 	"testing"
 
 	"go.uber.org/mock/gomock"
@@ -22,7 +22,7 @@ func TestService_PrintBranches_Moq(t *testing.T) {
 			},
 		}
 		s := Service{githubClient: githubClient}
-		out := new(bytes.Buffer)
+		out := new(strings.Builder)
 		if err := s.PrintBranches(context.Background(), out, "oinume", "playground-go"); err != nil {
 			t.Fatal(err)
 		}
@@ -57,7 +57,7 @@ func TestService_PrintBranches_Moq(t *testing.T) {
 	for name, tt := range tests {
 		t.Run(name, func(t *testing.T) {
 			s := Service{githubClient: tt.githubClient}
-			b := new(bytes.Buffer)
+			b := new(strings.Builder)
 			if err := s.PrintBranches(context.Background(), b, "a", "b"); !reflect.DeepEqual(tt.wantErr, err) {
 				t.Fatalf("unexpected error: err=%v, wantErr=%v", tt.wantErr, err)
 			}
@@ -80,7 +80,7 @@ func TestService_PrintBranches_Gomock(t *testing.T) {
 		ListBranches(context.Background(), "oinume", "playground-go").
 		Return([]string{"main", "develop", "feature/a"}, nil)
 	s := Service{githubClient: githubClient}
-	out := new(bytes.Buffer)
+	out := new(strings.Builder)
 	if err := s.PrintBranches(context.Background(), out, "oinume", "playground-go"); err != nil {
 		t.Fatal(err)
 	}
