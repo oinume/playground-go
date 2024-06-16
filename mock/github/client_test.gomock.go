@@ -39,6 +39,18 @@ func (m *MockClient) EXPECT() *MockClientMockRecorder {
 	return m.recorder
 }
 
+// Foo mocks base method.
+func (m *MockClient) Foo() {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "Foo")
+}
+
+// Foo indicates an expected call of Foo.
+func (mr *MockClientMockRecorder) Foo() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Foo", reflect.TypeOf((*MockClient)(nil).Foo))
+}
+
 // ListBranches mocks base method.
 func (m *MockClient) ListBranches(arg0 context.Context, arg1, arg2 string) ([]string, error) {
 	m.ctrl.T.Helper()

@@ -4,7 +4,7 @@
 package github
 
 import (
-	context "context"
+	"context"
 	"sync"
 )
 
@@ -18,6 +18,9 @@ var _ Client = &ClientMock{}
 //
 //		// make and configure a mocked Client
 //		mockedClient := &ClientMock{
+//			FooFunc: func()  {
+//				panic("mock out the Foo method")
+//			},
 //			ListBranchesFunc: func(ctx context.Context, owner string, repo string) ([]string, error) {
 //				panic("mock out the ListBranches method")
 //			},
@@ -28,11 +31,17 @@ var _ Client = &ClientMock{}
 //
 //	}
 type ClientMock struct {
+	// FooFunc mocks the Foo method.
+	FooFunc func()
+
 	// ListBranchesFunc mocks the ListBranches method.
 	ListBranchesFunc func(ctx context.Context, owner string, repo string) ([]string, error)
 
 	// calls tracks calls to the methods.
 	calls struct {
+		// Foo holds details about calls to the Foo method.
+		Foo []struct {
+		}
 		// ListBranches holds details about calls to the ListBranches method.
 		ListBranches []struct {
 			// Ctx is the ctx argument value.
@@ -43,7 +52,35 @@ type ClientMock struct {
 			Repo string
 		}
 	}
+	lockFoo          sync.RWMutex
 	lockListBranches sync.RWMutex
+}
+
+// Foo calls FooFunc.
+func (mock *ClientMock) Foo() {
+	if mock.FooFunc == nil {
+		panic("ClientMock.FooFunc: method is nil but Client.Foo was just called")
+	}
+	callInfo := struct {
+	}{}
+	mock.lockFoo.Lock()
+	mock.calls.Foo = append(mock.calls.Foo, callInfo)
+	mock.lockFoo.Unlock()
+	mock.FooFunc()
+}
+
+// FooCalls gets all the calls that were made to Foo.
+// Check the length with:
+//
+//	len(mockedClient.FooCalls())
+func (mock *ClientMock) FooCalls() []struct {
+} {
+	var calls []struct {
+	}
+	mock.lockFoo.RLock()
+	calls = mock.calls.Foo
+	mock.lockFoo.RUnlock()
+	return calls
 }
 
 // ListBranches calls ListBranchesFunc.

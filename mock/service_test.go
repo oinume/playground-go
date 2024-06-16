@@ -74,14 +74,16 @@ func TestService_PrintBranches_Gomock(t *testing.T) {
 	// Simple example test
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	ctx := context.Background()
 	githubClient := github.NewMockClient(ctrl)
 	githubClient.
 		EXPECT().
-		ListBranches(context.Background(), "oinume", "playground-go").
+		ListBranches(ctx, "oinume", "playground-go").
 		Return([]string{"main", "develop", "feature/a"}, nil)
 	s := Service{githubClient: githubClient}
 	out := new(strings.Builder)
-	if err := s.PrintBranches(context.Background(), out, "oinume", "playground-go"); err != nil {
+	err := s.PrintBranches(ctx, out, "oinume", "playground-go")
+	if err != nil {
 		t.Fatal(err)
 	}
 	fmt.Printf("--- out ---\n%v\n", out.String())
