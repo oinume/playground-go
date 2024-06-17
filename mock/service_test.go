@@ -17,7 +17,10 @@ func TestService_PrintBranches_Moq(t *testing.T) {
 	// Simple example test
 	{
 		githubClient := &github.ClientMock{
-			ListBranchesFunc: func(ctx context.Context, owner string, repo string) ([]string, error) {
+			ListBranchesFunc: func(
+				ctx context.Context,
+				owner string, repo string,
+			) ([]string, error) {
 				return []string{"main", "develop", "feature/a"}, nil
 			},
 		}
