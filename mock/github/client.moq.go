@@ -4,7 +4,7 @@
 package github
 
 import (
-	context "context"
+	"context"
 	"sync"
 )
 
@@ -18,6 +18,12 @@ var _ Client = &ClientMock{}
 //
 //		// make and configure a mocked Client
 //		mockedClient := &ClientMock{
+//			BarFunc: func() error {
+//				panic("mock out the Bar method")
+//			},
+//			FooFunc: func() error {
+//				panic("mock out the Foo method")
+//			},
 //			ListBranchesFunc: func(ctx context.Context, owner string, repo string) ([]string, error) {
 //				panic("mock out the ListBranches method")
 //			},
@@ -28,11 +34,23 @@ var _ Client = &ClientMock{}
 //
 //	}
 type ClientMock struct {
+	// BarFunc mocks the Bar method.
+	BarFunc func() error
+
+	// FooFunc mocks the Foo method.
+	FooFunc func() error
+
 	// ListBranchesFunc mocks the ListBranches method.
 	ListBranchesFunc func(ctx context.Context, owner string, repo string) ([]string, error)
 
 	// calls tracks calls to the methods.
 	calls struct {
+		// Bar holds details about calls to the Bar method.
+		Bar []struct {
+		}
+		// Foo holds details about calls to the Foo method.
+		Foo []struct {
+		}
 		// ListBranches holds details about calls to the ListBranches method.
 		ListBranches []struct {
 			// Ctx is the ctx argument value.
@@ -43,7 +61,63 @@ type ClientMock struct {
 			Repo string
 		}
 	}
+	lockBar          sync.RWMutex
+	lockFoo          sync.RWMutex
 	lockListBranches sync.RWMutex
+}
+
+// Bar calls BarFunc.
+func (mock *ClientMock) Bar() error {
+	if mock.BarFunc == nil {
+		panic("ClientMock.BarFunc: method is nil but Client.Bar was just called")
+	}
+	callInfo := struct {
+	}{}
+	mock.lockBar.Lock()
+	mock.calls.Bar = append(mock.calls.Bar, callInfo)
+	mock.lockBar.Unlock()
+	return mock.BarFunc()
+}
+
+// BarCalls gets all the calls that were made to Bar.
+// Check the length with:
+//
+//	len(mockedClient.BarCalls())
+func (mock *ClientMock) BarCalls() []struct {
+} {
+	var calls []struct {
+	}
+	mock.lockBar.RLock()
+	calls = mock.calls.Bar
+	mock.lockBar.RUnlock()
+	return calls
+}
+
+// Foo calls FooFunc.
+func (mock *ClientMock) Foo() error {
+	if mock.FooFunc == nil {
+		panic("ClientMock.FooFunc: method is nil but Client.Foo was just called")
+	}
+	callInfo := struct {
+	}{}
+	mock.lockFoo.Lock()
+	mock.calls.Foo = append(mock.calls.Foo, callInfo)
+	mock.lockFoo.Unlock()
+	return mock.FooFunc()
+}
+
+// FooCalls gets all the calls that were made to Foo.
+// Check the length with:
+//
+//	len(mockedClient.FooCalls())
+func (mock *ClientMock) FooCalls() []struct {
+} {
+	var calls []struct {
+	}
+	mock.lockFoo.RLock()
+	calls = mock.calls.Foo
+	mock.lockFoo.RUnlock()
+	return calls
 }
 
 // ListBranches calls ListBranchesFunc.

@@ -7,4 +7,19 @@ import "context"
 
 type Client interface {
 	ListBranches(ctx context.Context, owner, repo string) ([]string, error)
+	Foo() error
+	Bar() error
 }
+
+type MockedClient struct {
+	Client
+}
+
+func (m *MockedClient) ListBranches(
+	ctx context.Context,
+	owner, repo string,
+) ([]string, error) {
+	return []string{"main", "develop", "feature/a"}, nil
+}
+
+// Foo, Barは実装しなくてOK

@@ -87,3 +87,15 @@ func TestService_PrintBranches_Gomock(t *testing.T) {
 	}
 	fmt.Printf("--- out ---\n%v\n", out.String())
 }
+
+func TestService_PrintBranches_Mine(t *testing.T) {
+	// Simple example test
+	ctx := context.Background()
+	githubClient := &github.MockedClient{}
+	s := Service{githubClient: githubClient}
+	out := new(strings.Builder)
+	if err := s.PrintBranches(ctx, out, "oinume", "playground-go"); err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("--- out ---\n%v\n", out.String())
+}
