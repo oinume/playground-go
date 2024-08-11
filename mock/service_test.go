@@ -17,13 +17,17 @@ func TestService_PrintBranches_Moq(t *testing.T) {
 	// Simple example test
 	{
 		githubClient := &github.ClientMock{
-			ListBranchesFunc: func(ctx context.Context, owner string, repo string) ([]string, error) {
+			ListBranchesFunc: func(
+				ctx context.Context,
+				owner string, repo string,
+			) ([]string, error) {
 				return []string{"main", "develop", "feature/a"}, nil
 			},
 		}
 		s := Service{githubClient: githubClient}
 		out := new(strings.Builder)
-		if err := s.PrintBranches(context.Background(), out, "oinume", "playground-go"); err != nil {
+		err := s.PrintBranches(context.Background(), out, "oinume", "playground-go")
+		if err != nil {
 			t.Fatal(err)
 		}
 
