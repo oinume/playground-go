@@ -1,3 +1,10 @@
+/*
+Example:
+
+```
+$ eg -t tools_eg/template.go -w tools_eg/http_get.go
+```
+*/
 package main
 
 import (
