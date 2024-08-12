@@ -1,0 +1,21 @@
+/*
+Example:
+
+```
+$ eg -t tools_eg/http_get.template -w tools_eg/http_get.go
+```
+*/
+package main
+
+import (
+	"io"
+	"io/ioutil"
+)
+
+func before(r io.Reader) ([]byte, error) {
+	return ioutil.ReadAll(r)
+}
+
+func after(r io.Reader) ([]byte, error) {
+	return io.ReadAll(r)
+}
