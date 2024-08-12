@@ -7,16 +7,15 @@ env:
   CACHE_VERSION: 1
   GOPATH: /home/runner/work/go
   GOBIN: /home/runner/work/go/bin
+concurrency:
+  group: "${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}"
+  cancel-in-progress: "${{ github.ref != 'refs/heads/main' }}"
 jobs:
   lint:
     name: lint
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Cancel previous runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-          access_token: ${{ github.token }}
       - name: Check out the repository
         uses: actions/checkout@v4
       - uses: actions/cache@v3
@@ -29,7 +28,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-lint-
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           cache: false
           go-version-file: "go.mod"
