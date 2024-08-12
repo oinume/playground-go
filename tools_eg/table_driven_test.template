@@ -3,6 +3,7 @@ Example:
 
 ```
 $ eg -t tools_eg/table_driven_test.template -w tools_eg/table_driven_test.go
+eg: map[string]struct{} is not a safe replacement for struct{name string}
 ```
 */
 package main
