@@ -1,0 +1,16 @@
+/*
+Example:
+
+```
+$ eg -t tools_eg/table_driven_test.template -w tools_eg/table_driven_test.go
+```
+*/
+package main
+
+func before(name string) any {
+	return struct{ name string }{name: name}
+}
+
+func after(name string) any {
+	return map[string]struct{}{name: {}}
+}
