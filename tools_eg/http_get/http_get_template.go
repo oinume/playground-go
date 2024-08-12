@@ -2,7 +2,7 @@
 Example:
 
 ```
-$ eg -t tools_eg/template.go -w tools_eg/http_get.go
+$ eg -t tools_eg/http_get/http_get_template.go -w tools_eg/http_get/http_get.go
 ```
 */
 package main
