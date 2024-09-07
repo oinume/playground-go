@@ -12,6 +12,7 @@ require (
 	github.com/shogo82148/go-sql-proxy v0.0.0-20161217234738-b9548ad1f2b8
 	go.uber.org/mock v0.4.0
 	golang.org/x/sync v0.8.0
+	golang.org/x/tools v0.24.0
 )
 
 require (
@@ -20,5 +21,4 @@ require (
 	github.com/shogo82148/txmanager v0.0.1 // indirect
 	golang.org/x/mod v0.20.0 // indirect
 	golang.org/x/net v0.28.0 // indirect
-	golang.org/x/tools v0.24.0 // indirect
 )
