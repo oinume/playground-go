@@ -15,6 +15,7 @@ require (
 )
 
 require (
+	github.com/mikespook/gorbac v2.3.0+incompatible // indirect
 	github.com/onsi/ginkgo v1.13.0 // indirect
 	github.com/onsi/gomega v1.10.1 // indirect
 	github.com/shogo82148/txmanager v0.0.1 // indirect
