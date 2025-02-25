@@ -1,0 +1,54 @@
+あなたはGo言語に詳しいエンジニアです。以下の差分のような修正を行うためのコードをanalysis.Diagnostic.SuggestedFixesを用いて生成してください。
+
+```
+diff --git a/go/server/services/auth/auth_test.go b/go/server/services/auth/auth_test.go
+index ba5240143..aae2d7de2 100644
+--- a/go/server/services/auth/auth_test.go
++++ b/go/server/services/auth/auth_test.go
+@@ -38,13 +38,11 @@ func Test_service_RevokeToken(t *testing.T) {
+ 		ctx   context.Context
+ 		token *oauth2.Token
+ 	}
+-	tests := []struct {
+-		name    string
++	tests := map[string]struct {
+ 		args    args
+ 		wantErr bool
+ 	}{
+-		{
+-			name: "success",
++		"success": {
+ 			args: args{
+ 				ctx: context.Background(),
+ 				token: &oauth2.Token{
+@@ -53,8 +51,7 @@ func Test_service_RevokeToken(t *testing.T) {
+ 				},
+ 			},
+ 		},
+-		{
+-			name: "success when only access token",
++		"success when only access token": {
+ 			args: args{
+ 				ctx: context.Background(),
+ 				token: &oauth2.Token{
+@@ -63,8 +60,7 @@ func Test_service_RevokeToken(t *testing.T) {
+ 				},
+ 			},
+ 		},
+-		{
+-			name: "success when only refresh token",
++		"success when only refresh token": {
+ 			args: args{
+ 				ctx: context.Background(),
+ 				token: &oauth2.Token{
+@@ -75,8 +71,8 @@ func Test_service_RevokeToken(t *testing.T) {
+ 		},
+ 	}
+ 
+-	for _, tt := range tests {
+-		t.Run(tt.name, func(t *testing.T) {
++	for name, tt := range tests {
++		t.Run(name, func(t *testing.T) {
+ 			ts := httptest.NewServer(newFakeHandlerFunc(tt.args.token))
+ 			t.Cleanup(func() { ts.Close() })
+```
