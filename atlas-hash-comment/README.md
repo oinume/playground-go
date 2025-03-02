@@ -6,7 +6,7 @@ This is a directory for reproducing the incompatible changes introduced in atlas
 
 In atlas v0.28.1 or previous versions, `atlas migrate apply` succeeds.
 
-```
+```shell
 $ export ATLAS_VERSION=v0.28.1 && curl -sSf https://atlasgo.sh | sh
 
 $ atlas version
@@ -37,7 +37,7 @@ Migrating to version 20250227054634 (1 migrations in total):
 
 However, v0.29.0 or later, it fails.
 
-```
+```shell
 $ export ATLAS_VERSION=v0.29.0 && curl -sSf https://atlasgo.sh | sh
 
 $ atlas version
