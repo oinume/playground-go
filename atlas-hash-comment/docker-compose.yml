@@ -1,0 +1,9 @@
+services:
+  postgres:
+    image: "postgres:16.5"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: atlas-db
+    ports:
+      - "5432:5432"
