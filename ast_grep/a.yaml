@@ -1,0 +1,16 @@
+language: go
+id: a
+rule:
+  # inside:
+  #   any:
+  #     - kind: slice_type
+  pattern: |
+    struct {
+      name string
+      $FIELDS
+    }
+    
+#fix: |
+#  tests := map[string]struct {
+#    $FIELDS
+#  }

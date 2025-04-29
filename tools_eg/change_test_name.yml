@@ -1,0 +1,12 @@
+id: change_test_name
+language: Go
+rule:
+  pattern:
+    context: struct{ $FIELD $TYPE }
+    selector: field_definition
+
+  |
+    []struct{$$$S}
+
+fix: |-
+  map[string]struct{}
