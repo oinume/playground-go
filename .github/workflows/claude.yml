@@ -24,22 +24,5 @@ jobs:
     uses: oinume/shared-workflows/.github/workflows/claude.yml@main
     with:
       settings: ".github/claude.settings.json"
-      claude_args: |
-        --allowedTools "Agent"
-        --allowedTools "Glob"
-        --allowedTools "Grep"
-        --allowedTools "SlashCommand"
-        --allowedTools "WebFetch"
-        --allowedTools "WebSearch"
-        --allowedTools "mcp__github__get_pull_request"
-        --allowedTools "mcp__github__get_pull_request_comments"
-        --allowedTools "mcp__github__create_pull_request"
-        --allowedTools "mcp__github__add_pull_request_review_comment"
-        --allowedTools "mcp__github__update_pull_request"
-        --allowedTools "mcp__github__create_branch"
-        --allowedTools "mcp__github__create_issue"
-        --allowedTools "mcp__github__update_issue"
-        --allowedTools "mcp__github__get_issue_comments"
-        --allowedTools "mcp__github__get_issue"
     secrets:
       anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
