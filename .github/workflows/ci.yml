@@ -6,6 +6,7 @@ on:
     paths:
       - "go.*"
       - "**/*.go"
+      - ".github/workflows/*.yml"
 env:
   CACHE_VERSION: 1
   GOPATH: /home/runner/work/go
