@@ -82,6 +82,8 @@ func BenchmarkInsertUUID(b *testing.B) {
 
 const setupRows = 1_000_000
 const batchSize = 1000
+const recentSampleSize = 1000
+const randomSampleSize = 10000
 
 func TestSetupSerialData(t *testing.T) {
 	ctx := context.Background()
@@ -162,22 +164,17 @@ func TestSetupUUIDData(t *testing.T) {
 func BenchmarkSelectRecentSerial(b *testing.B) {
 	ctx := context.Background()
 
-	// Get the max ID to determine "recent" range
-	var maxID int64
-	err := pool.QueryRow(ctx, "SELECT COALESCE(MAX(id), 0) FROM users_serial").Scan(&maxID)
+	recentIDs, err := loadRecentSerialIDs(ctx, recentSampleSize)
 	if err != nil {
 		b.Fatal(err)
 	}
-	if maxID < 1000 {
+	if len(recentIDs) < recentSampleSize {
 		b.Skip("Not enough data in users_serial. Run TestSetupSerialData first.")
 	}
 
-	// Recent 1000 IDs
-	minRecent := maxID - 999
-
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		targetID := minRecent + rand.Int64N(1000)
+		targetID := recentIDs[rand.IntN(len(recentIDs))]
 		var name, email string
 		err := pool.QueryRow(ctx,
 			"SELECT name, email FROM users_serial WHERE id = $1", targetID,
@@ -191,22 +188,11 @@ func BenchmarkSelectRecentSerial(b *testing.B) {
 func BenchmarkSelectRecentUUID(b *testing.B) {
 	ctx := context.Background()
 
-	// Get the most recent 1000 UUIDs
-	rows, err := pool.Query(ctx,
-		"SELECT id FROM users_uuid ORDER BY id DESC LIMIT 1000")
+	recentIDs, err := loadRecentUUIDIDs(ctx, recentSampleSize)
 	if err != nil {
 		b.Fatal(err)
 	}
-	var recentIDs []uuid.UUID
-	for rows.Next() {
-		var id uuid.UUID
-		if err := rows.Scan(&id); err != nil {
-			b.Fatal(err)
-		}
-		recentIDs = append(recentIDs, id)
-	}
-	rows.Close()
-	if len(recentIDs) < 1000 {
+	if len(recentIDs) < recentSampleSize {
 		b.Skip("Not enough data in users_uuid. Run TestSetupUUIDData first.")
 	}
 
@@ -226,18 +212,17 @@ func BenchmarkSelectRecentUUID(b *testing.B) {
 func BenchmarkSelectRandomSerial(b *testing.B) {
 	ctx := context.Background()
 
-	var maxID int64
-	err := pool.QueryRow(ctx, "SELECT COALESCE(MAX(id), 0) FROM users_serial").Scan(&maxID)
+	randomIDs, err := loadRandomSerialIDs(ctx, randomSampleSize)
 	if err != nil {
 		b.Fatal(err)
 	}
-	if maxID < 1000 {
+	if len(randomIDs) < recentSampleSize {
 		b.Skip("Not enough data in users_serial. Run TestSetupSerialData first.")
 	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		targetID := rand.Int64N(maxID) + 1
+		targetID := randomIDs[rand.IntN(len(randomIDs))]
 		var name, email string
 		err := pool.QueryRow(ctx,
 			"SELECT name, email FROM users_serial WHERE id = $1", targetID,
@@ -251,28 +236,17 @@ func BenchmarkSelectRandomSerial(b *testing.B) {
 func BenchmarkSelectRandomUUID(b *testing.B) {
 	ctx := context.Background()
 
-	// Collect a sample of UUIDs from across the full range
-	rows, err := pool.Query(ctx,
-		"SELECT id FROM users_uuid ORDER BY random() LIMIT 10000")
+	randomIDs, err := loadRandomUUIDIDs(ctx, randomSampleSize)
 	if err != nil {
 		b.Fatal(err)
 	}
-	var allIDs []uuid.UUID
-	for rows.Next() {
-		var id uuid.UUID
-		if err := rows.Scan(&id); err != nil {
-			b.Fatal(err)
-		}
-		allIDs = append(allIDs, id)
-	}
-	rows.Close()
-	if len(allIDs) < 1000 {
+	if len(randomIDs) < recentSampleSize {
 		b.Skip("Not enough data in users_uuid. Run TestSetupUUIDData first.")
 	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		targetID := allIDs[rand.IntN(len(allIDs))]
+		targetID := randomIDs[rand.IntN(len(randomIDs))]
 		var name, email string
 		err := pool.QueryRow(ctx,
 			"SELECT name, email FROM users_uuid WHERE id = $1", targetID,
@@ -281,4 +255,112 @@ func BenchmarkSelectRandomUUID(b *testing.B) {
 			b.Fatal(err)
 		}
 	}
+}
+
+func loadRecentSerialIDs(ctx context.Context, limit int) ([]int64, error) {
+	rows, err := pool.Query(ctx,
+		"SELECT id FROM users_serial ORDER BY id DESC LIMIT $1", limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	ids := make([]int64, 0, limit)
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		ids = append(ids, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return ids, nil
+}
+
+func loadRecentUUIDIDs(ctx context.Context, limit int) ([]uuid.UUID, error) {
+	rows, err := pool.Query(ctx,
+		"SELECT id FROM users_uuid ORDER BY id DESC LIMIT $1", limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	ids := make([]uuid.UUID, 0, limit)
+	for rows.Next() {
+		var id uuid.UUID
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		ids = append(ids, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return ids, nil
+}
+
+func loadRandomSerialIDs(ctx context.Context, limit int) ([]int64, error) {
+	ids := make([]int64, 0, limit)
+	samplePercents := []string{"1.0", "2.0", "5.0", "10.0"}
+	for _, percent := range samplePercents {
+		query := fmt.Sprintf(
+			"SELECT id FROM users_serial TABLESAMPLE SYSTEM (%s) LIMIT %d",
+			percent, limit,
+		)
+		rows, err := pool.Query(ctx, query)
+		if err != nil {
+			return nil, err
+		}
+		for rows.Next() {
+			var id int64
+			if err := rows.Scan(&id); err != nil {
+				rows.Close()
+				return nil, err
+			}
+			ids = append(ids, id)
+		}
+		if err := rows.Err(); err != nil {
+			rows.Close()
+			return nil, err
+		}
+		rows.Close()
+		if len(ids) >= limit {
+			break
+		}
+	}
+	return ids, nil
+}
+
+func loadRandomUUIDIDs(ctx context.Context, limit int) ([]uuid.UUID, error) {
+	ids := make([]uuid.UUID, 0, limit)
+	samplePercents := []string{"1.0", "2.0", "5.0", "10.0"}
+	for _, percent := range samplePercents {
+		query := fmt.Sprintf(
+			"SELECT id FROM users_uuid TABLESAMPLE SYSTEM (%s) LIMIT %d",
+			percent, limit,
+		)
+		rows, err := pool.Query(ctx, query)
+		if err != nil {
+			return nil, err
+		}
+		for rows.Next() {
+			var id uuid.UUID
+			if err := rows.Scan(&id); err != nil {
+				rows.Close()
+				return nil, err
+			}
+			ids = append(ids, id)
+		}
+		if err := rows.Err(); err != nil {
+			rows.Close()
+			return nil, err
+		}
+		rows.Close()
+		if len(ids) >= limit {
+			break
+		}
+	}
+	return ids, nil
 }
