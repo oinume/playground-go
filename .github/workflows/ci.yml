@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - "*"
+    paths:
+      - "go.*"
+      - "**/*.go"
 env:
   CACHE_VERSION: 1
   GOPATH: /home/runner/work/go
