@@ -24,5 +24,7 @@ jobs:
     uses: oinume/shared-workflows/.github/workflows/claude.yml@main
     with:
       settings: ".github/claude.settings.json"
+      claude_args: |
+        --allowedTools "Agent"
     secrets:
       anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
