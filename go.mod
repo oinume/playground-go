@@ -1,6 +1,6 @@
 module github.com/oinume/playground-go
 
-go 1.22
+go 1.25
 
 require (
 	github.com/cenkalti/backoff v2.0.0+incompatible
