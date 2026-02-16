@@ -23,29 +23,14 @@ jobs:
       actions: read
     uses: oinume/shared-workflows/.github/workflows/claude.yml@main
     with:
+      settings: ".github/claude.settings.json"
       claude_args: |
-        --mcp-config ./.mcp.json
         --allowedTools "Agent"
-        --allowedTools "Bash(git status:*)"
-        --allowedTools "Bash(git log:*)"
-        --allowedTools "Bash(git show:*)"
-        --allowedTools "Bash(git blame:*)"
-        --allowedTools "Bash(git reflog:*)"
-        --allowedTools "Bash(git ls-files:*)"
-        --allowedTools "Bash(git branch:*)"
-        --allowedTools "Bash(git tag:*)"
-        --allowedTools "Bash(git diff:*)"
-        --allowedTools "Bash(git push:*)"
-        --allowedTools "Bash(go install:*)"
-        --allowedTools "Bash(go test:*)"
-        --allowedTools "Bash(cd:*)"
-        --allowedTools "Bash(make:*)"
         --allowedTools "Glob"
         --allowedTools "Grep"
         --allowedTools "SlashCommand"
         --allowedTools "WebFetch"
         --allowedTools "WebSearch"
-        --allowedTools "mcp__chakra-ui__*"
         --allowedTools "mcp__github__get_pull_request"
         --allowedTools "mcp__github__get_pull_request_comments"
         --allowedTools "mcp__github__create_pull_request"
