@@ -54,6 +54,7 @@
       "Bash(gh pr *)",
       "Bash(go build *)",
       "Bash(go env *)",
+      "Bash(go mod *)",
       "Bash(go test *)",
       "Bash(go tool *)",
       "Bash(go vet *)"
