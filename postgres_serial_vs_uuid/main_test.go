@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand/v2"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/google/uuid"
@@ -257,6 +258,112 @@ func BenchmarkSelectRandomUUID(b *testing.B) {
 	}
 }
 
+// --- EXPLAIN (ANALYZE, BUFFERS) benchmarks ---　(挙動が怪しいので未使用)
+
+func BenchmarkExplainRecentSerialBuffers(b *testing.B) {
+	ctx := context.Background()
+
+	recentIDs, err := loadRecentSerialIDs(ctx, recentSampleSize)
+	if err != nil {
+		b.Fatal(err)
+	}
+	if len(recentIDs) < recentSampleSize {
+		b.Skip("Not enough data in users_serial. Run TestSetupSerialData first.")
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		targetID := recentIDs[rand.IntN(len(recentIDs))]
+		metrics, err := explainBuffers(ctx,
+			"SELECT name, email FROM users_serial WHERE id = $1", targetID,
+		)
+		if err != nil {
+			b.Fatal(err)
+		}
+		if i == 0 {
+			reportBufferMetrics(b, metrics)
+		}
+	}
+}
+
+func BenchmarkExplainRecentUUIDBuffers(b *testing.B) {
+	ctx := context.Background()
+
+	recentIDs, err := loadRecentUUIDIDs(ctx, recentSampleSize)
+	if err != nil {
+		b.Fatal(err)
+	}
+	if len(recentIDs) < recentSampleSize {
+		b.Skip("Not enough data in users_uuid. Run TestSetupUUIDData first.")
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		targetID := recentIDs[rand.IntN(len(recentIDs))]
+		metrics, err := explainBuffers(ctx,
+			"SELECT name, email FROM users_uuid WHERE id = $1", targetID,
+		)
+		if err != nil {
+			b.Fatal(err)
+		}
+		if i == 0 {
+			reportBufferMetrics(b, metrics)
+		}
+	}
+}
+
+func BenchmarkExplainRandomSerialBuffers(b *testing.B) {
+	ctx := context.Background()
+
+	randomIDs, err := loadRandomSerialIDs(ctx, randomSampleSize)
+	if err != nil {
+		b.Fatal(err)
+	}
+	if len(randomIDs) < recentSampleSize {
+		b.Skip("Not enough data in users_serial. Run TestSetupSerialData first.")
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		targetID := randomIDs[rand.IntN(len(randomIDs))]
+		metrics, err := explainBuffers(ctx,
+			"SELECT name, email FROM users_serial WHERE id = $1", targetID,
+		)
+		if err != nil {
+			b.Fatal(err)
+		}
+		if i == 0 {
+			reportBufferMetrics(b, metrics)
+		}
+	}
+}
+
+func BenchmarkExplainRandomUUIDBuffers(b *testing.B) {
+	ctx := context.Background()
+
+	randomIDs, err := loadRandomUUIDIDs(ctx, randomSampleSize)
+	if err != nil {
+		b.Fatal(err)
+	}
+	if len(randomIDs) < recentSampleSize {
+		b.Skip("Not enough data in users_uuid. Run TestSetupUUIDData first.")
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		targetID := randomIDs[rand.IntN(len(randomIDs))]
+		metrics, err := explainBuffers(ctx,
+			"SELECT name, email FROM users_uuid WHERE id = $1", targetID,
+		)
+		if err != nil {
+			b.Fatal(err)
+		}
+		if i == 0 {
+			reportBufferMetrics(b, metrics)
+		}
+	}
+}
+
 func loadRecentSerialIDs(ctx context.Context, limit int) ([]int64, error) {
 	rows, err := pool.Query(ctx,
 		"SELECT id FROM users_serial ORDER BY id DESC LIMIT $1", limit)
@@ -277,6 +384,105 @@ func loadRecentSerialIDs(ctx context.Context, limit int) ([]int64, error) {
 		return nil, err
 	}
 	return ids, nil
+}
+
+type bufferMetrics struct {
+	sharedHit     int64
+	sharedRead    int64
+	sharedDirtied int64
+	sharedWritten int64
+	tempRead      int64
+	tempWritten   int64
+}
+
+var (
+	reSharedHit     = regexp.MustCompile(`shared hit=(\d+)`)
+	reSharedRead    = regexp.MustCompile(`shared read=(\d+)`)
+	reSharedDirtied = regexp.MustCompile(`shared dirtied=(\d+)`)
+	reSharedWritten = regexp.MustCompile(`shared written=(\d+)`)
+	reTempRead      = regexp.MustCompile(`temp read=(\d+)`)
+	reTempWritten   = regexp.MustCompile(`temp written=(\d+)`)
+)
+
+func explainBuffers(ctx context.Context, query string, args ...any) (bufferMetrics, error) {
+	rows, err := pool.Query(ctx, "EXPLAIN (ANALYZE, BUFFERS) "+query, args...)
+	if err != nil {
+		return bufferMetrics{}, err
+	}
+	defer rows.Close()
+
+	var lastBuffersLine string
+	for rows.Next() {
+		var line string
+		if err := rows.Scan(&line); err != nil {
+			return bufferMetrics{}, err
+		}
+		if hasBuffersLine(line) {
+			lastBuffersLine = line
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return bufferMetrics{}, err
+	}
+
+	if lastBuffersLine == "" {
+		return bufferMetrics{}, nil
+	}
+
+	return parseBufferMetrics(lastBuffersLine), nil
+}
+
+func hasBuffersLine(line string) bool {
+	for i := 0; i+7 < len(line); i++ {
+		if line[i:i+8] == "Buffers:" {
+			return true
+		}
+	}
+	return false
+}
+
+func parseBufferMetrics(line string) bufferMetrics {
+	metrics := bufferMetrics{}
+	if v := captureInt64(reSharedHit, line); v >= 0 {
+		metrics.sharedHit = v
+	}
+	if v := captureInt64(reSharedRead, line); v >= 0 {
+		metrics.sharedRead = v
+	}
+	if v := captureInt64(reSharedDirtied, line); v >= 0 {
+		metrics.sharedDirtied = v
+	}
+	if v := captureInt64(reSharedWritten, line); v >= 0 {
+		metrics.sharedWritten = v
+	}
+	if v := captureInt64(reTempRead, line); v >= 0 {
+		metrics.tempRead = v
+	}
+	if v := captureInt64(reTempWritten, line); v >= 0 {
+		metrics.tempWritten = v
+	}
+	return metrics
+}
+
+func captureInt64(re *regexp.Regexp, line string) int64 {
+	matches := re.FindStringSubmatch(line)
+	if len(matches) != 2 {
+		return -1
+	}
+	var value int64
+	for i := 0; i < len(matches[1]); i++ {
+		value = value*10 + int64(matches[1][i]-'0')
+	}
+	return value
+}
+
+func reportBufferMetrics(b *testing.B, metrics bufferMetrics) {
+	b.ReportMetric(float64(metrics.sharedHit), "buf_shared_hit")
+	b.ReportMetric(float64(metrics.sharedRead), "buf_shared_read")
+	b.ReportMetric(float64(metrics.sharedDirtied), "buf_shared_dirtied")
+	b.ReportMetric(float64(metrics.sharedWritten), "buf_shared_written")
+	b.ReportMetric(float64(metrics.tempRead), "buf_temp_read")
+	b.ReportMetric(float64(metrics.tempWritten), "buf_temp_written")
 }
 
 func loadRecentUUIDIDs(ctx context.Context, limit int) ([]uuid.UUID, error) {
