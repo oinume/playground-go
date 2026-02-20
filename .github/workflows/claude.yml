@@ -1,4 +1,4 @@
-name: claude-code
+name: claude
 on:
   issue_comment:
     types: [created]
@@ -24,7 +24,7 @@ jobs:
       issues: read
       id-token: write
       actions: read
-    uses: oinume/shared-workflows/.github/workflows/claude.yml@main
+    uses: oinume/shared-workflows/.github/workflows/shared-claude.yml@main
     with:
       settings: ".github/claude.settings.json"
       claude_args: |
