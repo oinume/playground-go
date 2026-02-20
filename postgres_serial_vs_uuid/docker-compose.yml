@@ -1,0 +1,12 @@
+services:
+  postgres:
+    image: "postgres:18"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: bench
+    command: ["postgres", "-c", "shared_buffers=1MB"]
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
